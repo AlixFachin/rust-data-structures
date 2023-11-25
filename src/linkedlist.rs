@@ -1,9 +1,9 @@
-pub struct LinkedList<T> {
+pub struct LinkedList<T: Clone> {
     next: Option<Box<LinkedList<T>>>,
     val: Option<T>,
 }
 
-impl<T> LinkedList<T> {
+impl<T: Clone> LinkedList<T> {
 
     pub fn new(val: Option<T>) -> Self {
         return Self {
@@ -31,7 +31,7 @@ impl<T> LinkedList<T> {
 
     pub fn append(&mut self, new_val: T) {        
         
-        match self.val {
+        match &self.val {
             None => {
                 self.val = Some(new_val);
                 return;},
@@ -59,19 +59,19 @@ impl<T> LinkedList<T> {
                 return next.pop();
             } else {
                 // The next one is empty!
-                let result = next.val;
+                let result = next.val.clone().unwrap();
                 self.next = None;
-                return result.unwrap();
+                return result;
             }
         } else {
-            let result = self.val.unwrap();
+            let result = self.val.clone().unwrap();
             self.val = None;
             return result;
         }
     }    
 }
 
-impl<T :std::fmt::Display> std::fmt::Display for LinkedList<T> {
+impl<T :std::fmt::Display + Clone> std::fmt::Display for LinkedList<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if let None = self.val {
             return write!(f, "<>");
@@ -81,7 +81,7 @@ impl<T :std::fmt::Display> std::fmt::Display for LinkedList<T> {
         let mut finished = false;
         let mut result = String::from("");
         while !finished {
-            result.push_str(&cur_pointer.val.unwrap().to_string());
+            result.push_str(&cur_pointer.val.clone().unwrap().to_string());
             if let Some(ref next_element) = cur_pointer.next {
                 result.push_str("->");
                 cur_pointer = &next_element;

@@ -5,7 +5,7 @@ use linkedlist::LinkedList;
 fn main() {
     let mut s = LinkedList::new(Some(3));
 
-    s.display();
+    println!("{}",s);
     s.append(4);
     s.append(5);    
     println!("{}",s);
