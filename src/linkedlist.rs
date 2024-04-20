@@ -4,12 +4,11 @@ pub struct LinkedList<T: Clone> {
 }
 
 impl<T: Clone> LinkedList<T> {
-
     pub fn new(val: Option<T>) -> Self {
         return Self {
             val: val,
             next: None,
-        }
+        };
     }
 
     pub fn len(&self) -> i32 {
@@ -26,32 +25,28 @@ impl<T: Clone> LinkedList<T> {
         }
 
         return result;
-
     }
 
-    pub fn append(&mut self, new_val: T) {        
-        
-        match &self.val {
-            None => {
-                self.val = Some(new_val);
-                return;},
-            Some(_val) => {
-                // Let's find the last one
-                if let Some(ref mut next) = &mut self.next {
-                    next.append(new_val);
-                } else {
-                    self.next = Some(Box::new(LinkedList { next: None, val: Some(new_val) }));
-                }
-            }
+    pub fn append(&mut self, new_val: T) {
+        // First case: if the list is empty, we can just set its first element
+        if self.val.is_none() {
+            self.val = Some(new_val);
+            return;
         }
-
+        // If the next element is empty, we just need to point it to a newly created LinkedList
+        if self.next.is_none() {
+            self.next = Some(Box::new(LinkedList { next: None, val: Some(new_val) }));
+            return;
+        }
+        // Otherwise we just make the recursive call to insert it further down the chain
+        self.next.as_mut().unwrap().append(new_val);
     }
 
     pub fn pop(&mut self) -> T {
         if let None = self.val {
-            panic!("Cannot pop an empty list!");            
+            panic!("Cannot pop an empty list!");
         }
-        
+
         if let Some(ref mut next) = &mut self.next {
             // Testing if the next block is the last one
             if let Some(ref mut _next_next) = &mut next.next {
@@ -68,10 +63,10 @@ impl<T: Clone> LinkedList<T> {
             self.val = None;
             return result;
         }
-    }    
+    }
 }
 
-impl<T :std::fmt::Display + Clone> std::fmt::Display for LinkedList<T> {
+impl<T: std::fmt::Display + Clone> std::fmt::Display for LinkedList<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if let None = self.val {
             return write!(f, "<>");
@@ -89,6 +84,6 @@ impl<T :std::fmt::Display + Clone> std::fmt::Display for LinkedList<T> {
                 finished = true;
             }
         }
-        return writeln!(f,"{}",&result);
+        return writeln!(f, "{}", &result);
     }
 }
